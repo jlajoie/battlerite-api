@@ -4,11 +4,13 @@ A RESTful API for interacting with and accessing data from the internal game API
 
 Written in Node using Express and Docker.
 
-This is a work in progress. There is a ton here that is commented out or not in use, I'm not marrying myself to the "versioned" API that is currently released. It will remain v1 until there is a tagged release on GitHub and the data contract is likely to change until then. Redis will eventually be the data store and there is some work
+This is a work in progress and this is a VERY initial release with only three moderately useful endpoints. There is a ton here that is commented out or not in use, I'm not marrying myself to the "versioned" API that is currently released. It will remain v1 until there is a tagged release on GitHub and the data contract is likely to change until then. Redis will eventually be the data store and there is some work done so far for it, I'll be adding up GitHub issues as I see fit to help track progress and show the direction this project will be taking.
 
 Error handling is also crap. I apologize, I have every intention of fixing it.
 
-Most common error, if you are receiving 401s on your queries, it's because you were unable to authenticate using SteamUser. Double check that your environment variables contain your username and password, and if you needed to add in a SteamGuard key you did so as well.
+For what it's worth, a lot of people have asked for an API, here's my first pass at one. I know a lot of folks haven't been able to figure out how to authenticate, or aren't familiar with using Wireshark or a .NET decompiler, so at the very least this can be a step in the right direction for them.
+
+Also, I assume this will be the most common error, if you are receiving 401s on your queries, it's because you were unable to authenticate using SteamUser. Double check that your environment variables contain your username and password, and if you needed to add in a SteamGuard key you did so as well.
 
 ## Requirements
 
