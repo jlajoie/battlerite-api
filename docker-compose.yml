@@ -1,0 +1,21 @@
+version: '2'
+services:
+    api:
+        build: ./api
+        working_dir: /src/
+        ports:
+          - "8080:8080"
+        volumes:
+          - "./api:/src/"
+          - "/src/node_modules"
+        command: "/bin/sh -c 'npm install && node index.js'"
+        environment:
+          - STEAM_ACCOUNT
+          - STEAM_PASSWORD
+          - STEAM_GUARD_KEY
+        links:
+          - redis
+    redis:
+        image: "redis"
+        ports:
+          - "6379:6379"
