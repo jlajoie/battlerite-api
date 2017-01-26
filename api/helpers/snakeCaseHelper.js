@@ -6,46 +6,31 @@ module.exports = function() {
 
     var helper = {};
 
-    helper.convertKeysToSnakeCase = function(map) {
-        var queue = [];
-        queue.push(map);
-        while (queue.length > 0) {
-            _.each(queue.shift(), function(value, key) {
-                var newKey = convertStringToSnakeCase(key);
-                map[newKey] = value;
-                // TODO shit hits the fan when this is an array... dont worry about members for now
-                if (typeof value === 'object' && key !== 'members') {
-                    queue.push(value);
-                }
-                if (key !== newKey) {
-                    delete map[key];
-                }
-            });
-
-        }
-        return map;
+    helpers.convertCamelStringToSnake = function(string) {
+        return string.replace(/([a-z])([A-Z])/g, function(p1, p2, p3) {
+            return p2 + '_' + p3
+        }).toLowerCase();
     };
 
-    var convertStringToSnakeCase = function(string) {
-        var snakeCaseString = '';
-        var firstIteration = true;
-        var previousWasUpperCase = false;
-        _.each(string, function (char) {
-            var asciiChar = char.charCodeAt(0);
-            if (65 <= asciiChar && asciiChar <= 90) {
-                if (firstIteration || previousWasUpperCase) {
-                    snakeCaseString += char.toLowerCase();
-                } else {
-                    snakeCaseString += '_' + char.toLowerCase();
-                }
-                previousWasUpperCase = true;
-            } else {
-                snakeCaseString += char;
-                previousWasUpperCase = false;
+    helper.convertCamelKeysToSnake = function (map) {
+        if (map) {
+            if (typeof map === 'object') {
+                _.each(map, function (value, key) {
+                    // If the child is an object, we still need to process it
+                    if (typeof value === 'object') {
+                        helper.convertCamelKeysToSnake(value);
+                    }
+                    // If the key is a String, it means the object is a map
+                    if (typeof key === 'string') {
+                        var newKey = helper.convertCamelStringToSnake(key);
+                        if (newKey !== key) {
+                            map[newKey] = value;
+                            delete map[key];
+                        }
+                    }
+                });
             }
-            firstIteration = false;
-        });
-        return snakeCaseString;
+        }
     };
 
     return helper;

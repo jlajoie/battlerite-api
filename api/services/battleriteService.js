@@ -68,7 +68,7 @@ module.exports = function (config) {
                         cb({code: 500, message: 'Internal server error'});
                     } else {
                         _.map(body.teams, function(team) { // TODO desperately will need to be parsed more appropriately
-                            return snakeCaseHelper.convertKeysToSnakeCase(team);
+                            return snakeCaseHelper.convertCamelKeysToSnake(team);
                         });
                         cb(null, {code: 200, message: 'Ok', data: body.teams});
                     }
@@ -98,7 +98,7 @@ module.exports = function (config) {
                         cb({code: 500, message: 'Internal server error'});
                     } else {
                         // TODO will be able to be multiple accounts, don't just reference [0]
-                        cb(null, {code: 200, message: 'Ok', data: snakeCaseHelper.convertKeysToSnakeCase(body.profiles[0])});
+                        cb(null, {code: 200, message: 'Ok', data: snakeCaseHelper.convertCamelKeysToSnake(body.profiles[0])});
                     }
                 });
             } else {
@@ -126,7 +126,7 @@ module.exports = function (config) {
                         cb({code: 500, message: 'Internal server error'});
                     }
                     // TODO receives a JSON string in this request
-                    cb(null, {code: 200, message: 'Ok', data: snakeCaseHelper.convertKeysToSnakeCase(JSON.parse(body))});
+                    cb(null, {code: 200, message: 'Ok', data: snakeCaseHelper.convertCamelKeysToSnake(JSON.parse(body))});
                 });
             } else {
                 cb({code: 400, message: "Bad request. 'name' must be of type 'string', was of type '" + typeof accountName + "'"});
