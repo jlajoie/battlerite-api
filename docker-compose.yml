@@ -1,21 +1,27 @@
 version: '2'
+volumes:
+  pg_data:
 services:
-    api:
-        build: ./api
-        working_dir: /src/
-        ports:
-          - "8080:8080"
-        volumes:
-          - "./api:/src/"
-          - "/src/node_modules"
-        command: "/bin/sh -c 'npm install && node index.js'"
-        environment:
-          - STEAM_ACCOUNT
-          - STEAM_PASSWORD
-          - STEAM_GUARD_KEY
-        links:
-          - redis
-    redis:
-        image: "redis"
-        ports:
-          - "6379:6379"
+  api:
+    build: ./api
+    working_dir: /src/
+    ports:
+      - "8080:8080"
+    volumes:
+      - "./api:/src/"
+      - "/src/node_modules"
+    command: "/bin/sh -c 'npm install && node index.js'"
+    environment:
+      - STEAM_ACCOUNT
+      - STEAM_PASSWORD
+    links:
+      - postgres
+  postgres:
+    image: "postgres"
+    ports:
+      - "5432:5432"
+    volumes:
+      - "pg_data:/var/lib/postgresql/data"
+    environment:
+      - POSTGRES_PASSWORD=docker
+      - POSTGRES_USER=docker

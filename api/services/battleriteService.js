@@ -3,27 +3,35 @@
 var SteamUser = require('steam-user');
 var request = require('request');
 var _ = require('lodash');
+var async = require('async');
 var snakeCaseHelper = require('../helpers/snakeCaseHelper.js')();
 
-module.exports = function (config) {
+module.exports = function (config, accountHelper) {
     var service = {};
 
     var client = new SteamUser();
     var sessionId = null;
 
-    if (!sessionId) {
+    if (!sessionId && process.env.NODE_ENV != 'dev') {
+        console.log('no session id');
         client.logOn(
             config.steam
         );
 
         client.on('error', function (error) {
+            console.log('error');
             console.error(error);
+        });
+
+        client.on('disconnected', function (error) {
+            console.log('disconnected');
         });
 
         client.on('LogonSessionReplaced', function(){console.log('here')});
 
         client.on('loggedOn', function() {
-            client.getEncryptedAppTicket(504370, new Buffer(''), function (error, steamKey) {
+            console.log('Logging on to steam as user: ' + config.steam.accountName)
+            client.getEncryptedAppTicket(504370, new Buffer(0), function (error, steamKey) {
                 if (error) {
                     console.error(error)
                 } else {
@@ -52,14 +60,14 @@ module.exports = function (config) {
         });
     }
 
-    service.getTeam = function (accountId, cb) {
+    service.getTeamsByAccountIds = function (accountIds, cb) {
         if (sessionId) {
             if (typeof accountId === 'string') {
                 var options = {
                     url: config.battlerite.protocol + config.battlerite.host + '/ranking/teams',
                     authorization: 'Bearer ' + sessionId,
                     json: {
-                        users: [accountId],
+                        users: accountIds,
                         season: config.battlerite.season // TODO eventually get this from the seasons/current endpoint
                     }
                 };
@@ -67,74 +75,109 @@ module.exports = function (config) {
                     if (error) {
                         cb({code: 500, message: 'Internal server error'});
                     } else {
-                        _.map(body.teams, function(team) { // TODO desperately will need to be parsed more appropriately
-                            return snakeCaseHelper.convertCamelKeysToSnake(team);
-                        });
-                        cb(null, {code: 200, message: 'Ok', data: body.teams});
+                        cb(null, body.Teams);
                     }
                 });
             } else {
-                cb({code: 400, message: "Bad request. 'account_id' must be of type 'string', was of type '" + typeof accountId + "'"});
+                cb({code: 400, message: "Bad request. 'account_ids' must be an array of strings"});
             }
         } else {
             cb({code: 401, message: 'Unauthorized'});
         }
     };
 
-    service.getAccount = function (accountId, cb) {
+    service.getAccountsByAccountIds = function (accountIds, cb) {
         if (sessionId) {
-            if (typeof accountId === 'string') {
+            if (accountIds.length) {
                 var options = {
-                    url: config.battlerite.protocol + config.battlerite.host + '/account/profile/public/v1',
-                    authorization: 'Bearer ' + sessionId,
+                    url: config.battlerite.protocol + config.battlerite.host + '/account/public/v1',
+                    headers: {
+                        authorization: 'Bearer ' + sessionId
+                    },
                     json: {
-                        users: [
-                            accountId
-                        ]
+                        users: accountIds
                     }
                 };
                 request.post(options, function (error, response, body) {
                     if (error) {
                         cb({code: 500, message: 'Internal server error'});
                     } else {
-                        // TODO will be able to be multiple accounts, don't just reference [0]
-                        cb(null, {code: 200, message: 'Ok', data: snakeCaseHelper.convertCamelKeysToSnake(body.profiles[0])});
+                        var inventories = _.map(body.inventories, function (inventory) {
+                            var stackables = accountHelper.transformIdsToNames(inventory.stackables);
+                            stackables.account_id = inventory.userId;
+
+                            return stackables;
+                        });
+                        cb(null, inventories);
                     }
                 });
             } else {
-                cb({code: 400, message: "Bad request. 'account_id' must be of type 'string', was of type '" + typeof accountId + "'"});
+                cb({code: 400, message: "Bad request. 'account_ids' must be an array of strings"});
             }
         } else {
             cb({code: 401, message: 'Unauthorized'});
         }
     };
 
-    service.getAccountId = function (accountName, cb) {
-        if (sessionId) {
-            if (typeof accountName === 'string') {
-                var options = {
-                    url: config.battlerite.protocol + config.battlerite.host + '/account/profile/id/v1',
-                    headers: {
-                        authorization: 'Bearer ' + sessionId
-                    },
-                    qs: {
-                        name: accountName
-                    }
-                };
-                request.get(options, function (error, response, body) {
-                    if (error) {
-                        cb({code: 500, message: 'Internal server error'});
-                    }
-                    // TODO receives a JSON string in this request
-                    cb(null, {code: 200, message: 'Ok', data: snakeCaseHelper.convertCamelKeysToSnake(JSON.parse(body))});
-                });
-            } else {
-                cb({code: 400, message: "Bad request. 'name' must be of type 'string', was of type '" + typeof accountName + "'"});
-            }
-        } else {
-            cb({code: 401, message: 'Unauthorized'});
-        }
-    };
+    // service.getAccountInfoByIds = function (accountIds, cb) {
+    //     async.parallel([
+    //         function (parallelCb) {
+    //             service.getAccountsByAccountIds(accountIds, function (err, res) {
+    //                 if (err) {
+    //                     parallelCb(err);
+    //                 } else {
+    //                     parallelCb(res);
+    //                 }
+    //             });
+    //         },
+    //         function (parallelCb) {
+    //             service.getTeamsByAccountIds(accountIds, function (err, res) {
+    //                 if (err) {
+    //                     parallelCb(err);
+    //                 } else {
+    //                     parallelCb(res);
+    //                 }
+    //             });
+    //         }
+    //     ], function (err, res) {
+    //         if (err) {
+    //             cb(err);
+    //         } else {
+    //             console.dir(JSON.stringify(res[0]));
+    //             console.dir(JSON.stringify(res[1]));
+    //             // res[0] accounts, res[1] teams
+    //             // do transforms in here, save this shit afterward
+    //             cb(res);
+    //         }
+    //     });
+    // }
+
+    // service.getAccountId = function (accountName, cb) {
+    //     if (sessionId) {
+    //         if (typeof accountName === 'string') {
+    //             var options = {
+    //                 url: config.battlerite.protocol + config.battlerite.host + '/account/profile/id/v1',
+    //                 headers: {
+    //                     authorization: 'Bearer ' + sessionId
+    //                 },
+    //                 qs: {
+    //                     name: accountName
+    //                 }
+    //             };
+    //             request.get(options, function (error, response, body) {
+    //                 if (error) {
+    //                     cb({code: 500, message: 'Internal server error'});
+    //                 }
+    //                 // TODO receives a JSON string in this request
+    //                 cb(null, {code: 200, message: 'Ok', data: snakeCaseHelper.convertCamelKeysToSnake(JSON.parse(body))});
+    //             });
+    //         } else {
+    //             cb({code: 400, message: "Bad request. 'name' must be of type 'string', was of type '" + typeof accountName + "'"});
+    //         }
+    //     } else {
+    //         cb({code: 401, message: 'Unauthorized'});
+    //     }
+    // };
 
     return service;
 };

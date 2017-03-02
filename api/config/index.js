@@ -2,19 +2,22 @@ module.exports = {
     battlerite: {
         protocol: 'http://',
         host: 'api.battlerite.net',
-        season: 1
+        season: 2
     },
-    redis: {
-        host: 'redis',
-        port: 6379
+    postgres: {
+        jdbc: 'postgres://docker:docker@postgres:5432/docker',
+        user: 'docker',
+        database: 'docker',
+        password: 'docker',
+        host: 'postgres',
+        port: 5432,
+        max: 10,
+        idleTimeoutMillis: 30000
     },
     steam: {
         accountName: process.env.STEAM_ACCOUNT || null,
         password: process.env.STEAM_PASSWORD || null,
-        machineName: 'docker-container',
-        logonID: Math.floor(Math.random() * 10000)
-        // TODO only enable if you have a steam guard key
-        // authCode: process.env.STEAM_GUARD_KEY || null
+        machineName: 'docker-container'
     },
     port: 8080
 };

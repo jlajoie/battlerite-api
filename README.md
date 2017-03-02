@@ -10,7 +10,7 @@ Error handling is also crap. I apologize, I have every intention of fixing it.
 
 For what it's worth, a lot of people have asked for an API, here's my first pass at one. I know a lot of folks haven't been able to figure out how to authenticate, or aren't familiar with using Wireshark or a .NET decompiler, so at the very least this can be a step in the right direction for them.
 
-Also, I assume this will be the most common error, if you are receiving 401s on your queries, it's because you were unable to authenticate using SteamUser. Double check that your environment variables contain your username and password, and if you needed to add in a SteamGuard key you did so as well.
+Also, I assume this will be the most common error, if you are receiving 401s on your queries, it's because you were unable to authenticate using SteamUser. Double check that your environment variables contain your username and password.
 
 ## Requirements
 
@@ -35,8 +35,8 @@ If you're familiar with NodeJS and would prefer not to use Docker feel free, I w
 	```
     export STEAM_ACCOUNT=youraccount
     export STEAM_PASSWORD=yourpassword
-    ``` 
-4. Clone the repo 
+    ```
+4. Clone the repo
     ```
     git clone https://github.com/jlajoie/battlerite-api.git
     ```
@@ -88,7 +88,7 @@ Using account_name = Vexation, you'll get the following response.
 
 Queries against the `account/profile/public/v1` internal endpoint.
 
-Using account_id = 6389, you'll get the following response. 
+Using account_id = 6389, you'll get the following response.
 
 ```
 {
@@ -105,7 +105,7 @@ Using account_id = 6389, you'll get the following response.
 
 #### /api/v1/teams/:account_id
 
-Queries against the `rankings/teams` internal endpoints. 
+Queries against the `rankings/teams` internal endpoints.
 
 If you're interested in getting your Solo Queue statistics, the team has only a single person as a member.
 

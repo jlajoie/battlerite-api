@@ -6,10 +6,15 @@ module.exports = function() {
 
     var helper = {};
 
-    helpers.convertCamelStringToSnake = function(string) {
-        return string.replace(/([a-z])([A-Z])/g, function(p1, p2, p3) {
-            return p2 + '_' + p3
-        }).toLowerCase();
+    helper.convertCamelStringToSnake = function(string) {
+        // Only recase ID for now until we encounter other poorly cased acronyms
+        // Also make sure the first character is lower case
+        return string.substr(0, 1).toLowerCase() + string.substr(1, string.length)
+            .replace('ID', 'Id')
+            .replace(/([A-Z])/g, function(p1, p2) {
+                return '_' + p1
+            }
+        ).toLowerCase();
     };
 
     helper.convertCamelKeysToSnake = function (map) {
