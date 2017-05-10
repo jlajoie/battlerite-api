@@ -21,3 +21,5 @@ services:
       - "./discord:/src/"
       - "/src/node_modules"
     command: "/bin/sh -c 'npm install && node index.js'"
+    environment:
+      - DISCORD_SECRET
