@@ -8,7 +8,7 @@ module.exports = function() {
 
     helper.convertCamelStringToSnake = function(string) {
         // Only recase ID for now until we encounter other poorly cased acronyms
-        // Also make sure the first character is lower case
+        // Make sure the first character is lower case
         return string.substr(0, 1).toLowerCase() + string.substr(1, string.length)
             .replace('ID', 'Id')
             .replace(/([A-Z])/g, function(p1, p2) {
@@ -17,6 +17,7 @@ module.exports = function() {
         ).toLowerCase();
     };
 
+    // Modifies the object in place
     helper.convertCamelKeysToSnake = function (map) {
         if (map) {
             if (typeof map === 'object') {

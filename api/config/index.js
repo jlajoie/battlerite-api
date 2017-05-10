@@ -2,17 +2,7 @@ module.exports = {
     battlerite: {
         protocol: 'http://',
         host: 'api.battlerite.net',
-        season: 2
-    },
-    postgres: {
-        jdbc: 'postgres://docker:docker@postgres:5432/docker',
-        user: 'docker',
-        database: 'docker',
-        password: 'docker',
-        host: 'postgres',
-        port: 5432,
-        max: 10,
-        idleTimeoutMillis: 30000
+        season: 3
     },
     steam: {
         accountName: process.env.STEAM_ACCOUNT || null,

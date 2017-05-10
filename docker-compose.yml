@@ -14,14 +14,10 @@ services:
     environment:
       - STEAM_ACCOUNT
       - STEAM_PASSWORD
-    links:
-      - postgres
-  postgres:
-    image: "postgres"
-    ports:
-      - "5432:5432"
+  discord:
+    build: ./discord
+    working_dir: /src/
     volumes:
-      - "pg_data:/var/lib/postgresql/data"
-    environment:
-      - POSTGRES_PASSWORD=docker
-      - POSTGRES_USER=docker
+      - "./discord:/src/"
+      - "/src/node_modules"
+    command: "/bin/sh -c 'npm install && node index.js'"
