@@ -2,11 +2,13 @@
 
 var _ = require('lodash');
 
-module.exports = function (config, db, battleriteService) {
+module.exports = function (config, battleriteService) {
     var controller = {};
 
-    controller.getAccountIdByName = function(req, res) {
-        battleriteService.getAccountId(req.params.account_name, function (error, account) {
+    controller.getAccountIdByName = function (req, res) {
+        console.log('Received request for accountIdByName with account_name: ' + req.params.account_name);
+        battleriteService.getAccountIdByName(req.params.account_name, function (error, account) {
+            console.log('Received response ' + account.code + ' for accountIdByName with account_name: ' + req.params.account_name);
             if (error) {
                 res.status(error.code).json(error);
             } else {
@@ -15,13 +17,27 @@ module.exports = function (config, db, battleriteService) {
         });
     };
 
-    controller.getOrCreate = function (req, res) {
-        // TODO may need to parse account_ids for validity
-        battleriteService.getAccountsByAccountIds(req.body.account_ids, function (error, accounts) {
+    controller.getProfileByIds = function (req, res) {
+        console.log('Received request for getProfileByIds with account_ids: ' + req.body.account_ids);
+        battleriteService.getProfileByAccountIds(req.body.account_ids, function (error, profile) {
+            console.log('Received response ' + profile.code + ' for getProfileByIds with account_ids: ' + req.body.account_ids);
             if (error) {
                 res.status(error.code).json(error);
             } else {
-                res.status(201).json({code: 201, message: 'Created', data: accounts});
+                res.status(profile.code).json(profile);
+            }
+        });
+    };
+
+    controller.getOrCreate = function (req, res) {
+        // TODO should likely merge getProfileById into this method
+        console.log('Received request for account.getOrCreate with account_ids: ' + req.body.account_ids);
+        battleriteService.getAccountsByAccountIds(req.body.account_ids, function (error, accounts) {
+            console.log('Received response ' + profile.code + ' for account.getOrCreate with account_ids: ' + req.body.account_ids);
+            if (error) {
+                res.status(error.code).json(error);
+            } else {
+                res.status(accounts.code).json(accounts);
             }
         });
     };

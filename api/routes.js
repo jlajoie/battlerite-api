@@ -1,9 +1,10 @@
 'use strict';
 
-module.exports = function(app, config, db) {
+module.exports = function(app, config) {
 
     var helpers = {
-        account: require('./helpers/accountHelper.js')()
+        account: require('./helpers/accountHelper.js')(),
+        team: require('./helpers/teamHelper.js')()
     };
 
     var services = {
@@ -12,8 +13,8 @@ module.exports = function(app, config, db) {
 
     var controllers = {
         admin: require('./controllers/adminController')(),
-        // teams: require('./controllers/teamController')(config, db, services.battlerite, ),
-        accounts: require('./controllers/accountController')(config, db, services.battlerite, helpers.account)
+        teams: require('./controllers/teamController')(config, services.battlerite, helpers.team),
+        accounts: require('./controllers/accountController')(config, services.battlerite, helpers.account)
     };
 
     // Admin routes
@@ -22,6 +23,12 @@ module.exports = function(app, config, db) {
     // Account routes
     app.post('/api/v1/accounts', controllers.accounts.getOrCreate);
 
+    // Team routes
+    app.post('/api/v1/teams', controllers.teams.getOrCreate);
+
     // ID route
-    // app.get('/api/v1/ids/:account_name', controllers.accounts.getAccountId);
+    app.get('/api/v1/ids/:account_name', controllers.accounts.getAccountIdByName);
+
+    // Profile route
+    app.post('/api/v1/profiles', controllers.accounts.getProfileByIds);
 };

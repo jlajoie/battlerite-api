@@ -14,8 +14,8 @@ module.exports = function () {
         'oldur',
         'ashka',
         'varesh',
-        'taya',
         'pearl',
+        'taya',
         'poloma',
         'croak',
         'freya',
@@ -25,7 +25,20 @@ module.exports = function () {
         'bakko',
         'rook',
         'pestilus',
+        null, // Because why not fucking skip 20
         'raigon'
+    ]
+
+    var characters = [
+        'lucie',
+        'sirius',
+        'iva',
+        'jade',
+        'ruh_kaan',
+        'oldur',
+        'ashka',
+        'varesh',
+        'pearl'
     ]
 
     map[2] = 'total_wins'

@@ -43,5 +43,18 @@ module.exports = function () {
         return mappedStackables;
     };
 
+    helper.transformPgToJson = function(account) {
+        return {
+            id: account.account_id,
+            name: account.name,
+            league: 'league',
+            division: 'division',
+            rating: 'rating',
+            characters: {
+
+            }
+        }
+    }
+
     return helper;
 };
