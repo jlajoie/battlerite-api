@@ -14,6 +14,8 @@ var isSuccess = function (response) {
     return response.statusCode >= 200 && response.statusCode < 300;
 }
 
+
+
 module.exports = function (config, accountHelper) {
     var service = {};
 
@@ -22,11 +24,16 @@ module.exports = function (config, accountHelper) {
     var refreshToken = null;
     var userId = null;
 
+    var ua = config.battlerite.user_agent;
+
     var sendRefresh = function() {
         if (sessionId && refreshToken && userId) {
             console.log('Sending refresh request');
             var options = {
                 url: config.battlerite.protocol + config.battlerite.host + '/auth/refresh/v1',
+                headers: ua ? {
+                    "User-Agent": ua
+                } : {},
                 json: {
                     refreshToken: refreshToken,
                     userId: userId
@@ -69,6 +76,9 @@ module.exports = function (config, accountHelper) {
                     console.log('Got Steam Encrypyted App Ticket: ' + steamKey.toString('base64'));
                     var options = {
                         url: config.battlerite.protocol + config.battlerite.host + '/auth/steam-async/v1',
+                        headers: ua ? {
+                            "User-Agent": ua
+                        } : {},
                         json: {
                             key: steamKey.toString('base64')
                         }
@@ -103,6 +113,9 @@ module.exports = function (config, accountHelper) {
             if (accountIds.length) {
                 var options = {
                     url: config.battlerite.protocol + config.battlerite.host + '/ranking/teams',
+                    headers: ua ? {
+                        "User-Agent": ua
+                    } : {},
                     authorization: 'Bearer ' + sessionId,
                     json: {
                         users: accountIds,
@@ -143,12 +156,17 @@ module.exports = function (config, accountHelper) {
                 var options = {
                     url: config.battlerite.protocol + config.battlerite.host + '/account/public/v1',
                     headers: {
-                        authorization: 'Bearer ' + sessionId
+                        authorization: 'Bearer ' + sessionId,
                     },
                     json: {
                         users: accountIds
                     }
                 };
+
+                if (ua) {
+                    options.headers['User-Agent'] = ua;
+                }
+
                 request.post(options, function (error, response, body) {
                     if (error) {
                         console.error(error());
@@ -182,6 +200,11 @@ module.exports = function (config, accountHelper) {
                         users: accountIds
                     }
                 };
+
+                if (ua) {
+                    options.headers['User-Agent'] = ua;
+                }
+
                 request.post(options, function (error, response, body) {
                     if (error) {
                         cb({code: 500, message: 'Internal server error'});
@@ -204,13 +227,18 @@ module.exports = function (config, accountHelper) {
                 var options = {
                     url: config.battlerite.protocol + config.battlerite.host + '/account/profile/id/v1',
                     headers: {
-                        'authorization': 'Bearer ' + sessionId,
+                        'authorization': 'Bearer ' + sessionId
                     },
                     qs: {
                         name: accountName
                     },
                     json: true
                 };
+
+                if (ua) {
+                    options.headers['User-Agent'] = ua;
+                }
+
                 request.get(options, function (error, response, body) {
                     if (error) {
                         console.error(error);
