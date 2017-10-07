@@ -26,20 +26,9 @@ module.exports = function () {
         'rook',
         'pestilus',
         null, // Because why not fucking skip 20
-        'raigon'
-    ]
-
-    var characters = [
-        'lucie',
-        'sirius',
-        'iva',
-        'jade',
-        'ruh_kaan',
-        'oldur',
-        'ashka',
-        'varesh',
-        'pearl'
-    ]
+        'raigon',
+        'blossom'
+    ];
 
     map[2] = 'total_wins'
     map['total_wins'] = 2
