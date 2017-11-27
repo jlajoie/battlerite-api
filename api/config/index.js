@@ -2,7 +2,7 @@ module.exports = {
     battlerite: {
         protocol: 'http://',
         host: 'api.battlerite.net',
-        season: 5
+        season: 6
     },
     steam: {
         accountName: process.env.STEAM_ACCOUNT || null,
