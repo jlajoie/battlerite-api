@@ -14,6 +14,7 @@ services:
     environment:
       - STEAM_ACCOUNT
       - STEAM_PASSWORD
+    restart: always
   discord:
     build: ./discord
     working_dir: /src/
@@ -23,3 +24,4 @@ services:
     command: "/bin/sh -c 'npm install && node index.js'"
     environment:
       - DISCORD_SECRET
+    restart: always
