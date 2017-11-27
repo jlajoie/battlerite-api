@@ -37,9 +37,8 @@ bot.on('ready', function () {
 
 bot.on('message', function (user, userId, channelId, message, event) {
     if (!config.whitelist.enabled ||
-        (config.whitelist.enabled && config.whitelist.channel.indexOf(channelId) !== -1)
-    ) {
-        var regex = /^!stats (\w+) {0,1}(.+)$/
+        (config.whitelist.enabled && config.whitelist.channel.indexOf(channelId) !== -1) {
+        var regex = /^!stats (\w+) {0,1}(.*)$/
         var matches = regex.exec(message);
         if (matches) {
             console.log(user + '/' + userId + ': ' + message);
@@ -47,7 +46,7 @@ bot.on('message', function (user, userId, channelId, message, event) {
                 case 'help':
                     bot.sendMessage({
                         to: channelId,
-                        message: '```!stats <solo|2v2|3v3> <username>```'
+                        message: '```!stats <solo|2v2|3v3|champions> <username>```'
                     });
                     break;
                 case 'solo':
@@ -77,7 +76,16 @@ bot.on('message', function (user, userId, channelId, message, event) {
                         }
                     });
                     break;
+                case 'champions':
+                    commands.champions(matches[2], function (err, res) {
+                        if (err) {
+                            console.error(err);
+                        } else {
+                            sendObjectMessage(bot, channelId, res);
+                        }
+                    })
             }
         }
     }
 });
+
