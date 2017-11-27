@@ -31,7 +31,9 @@ var getOrderedTotalGamesPlayed = function (account) {
         'bakko',
         'rook',
         'pestilus',
-        'raigon'
+        'raigon',
+	'blossom',
+	'thorn'
     ];
 
     return champions.sort(function (a, b) {
