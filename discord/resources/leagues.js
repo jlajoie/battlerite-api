@@ -1,12 +1,11 @@
 'use strict';
 
 module.exports = {
-    '0': 'Contender',
-    '1': 'Bronze',
-    '2': 'Silver',
-    '3': 'Gold',
-    '4': 'Platinum',
-    '5': 'Diamond',
-    '6': 'Champion',
-    '7': 'Grand Champion'
+    '0': 'Bronze',
+    '1': 'Silver',
+    '2': 'Gold',
+    '3': 'Platinum',
+    '4': 'Diamond',
+    '5': 'Champion',
+    '6': 'Grand Champion'
 }
