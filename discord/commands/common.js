@@ -10,7 +10,7 @@ var isSuccess = function (response) {
 
 module.exports = function (name, cb) {
     var options = {
-        url: config.api.protocol + config.api.host + '/api/v1/ids/' + name,
+        url: config.api.protocol + config.api.host + '/api/v1/ids/' + encodeURIComponent(name),
         json: true
     }
     request.get(options, function (err, idRes, idBody) {

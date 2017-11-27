@@ -6,12 +6,12 @@ module.exports = function (config, battleriteService) {
     var controller = {};
 
     controller.getAccountIdByName = function (req, res) {
-        console.log('Received request for accountIdByName with account_name: ' + req.params.account_name);
-        battleriteService.getAccountIdByName(req.params.account_name, function (error, account) {
+        console.log('Received request for accountIdByName with account_name: ' + decodeURIComponent(req.params[0]));
+        battleriteService.getAccountIdByName(decodeURIComponent(req.params[0]), function (error, account) {
             if (error) {
                 res.status(error.code).json(error);
             } else {
-            	console.log('Received response ' + account.code + ' for accountIdByName with account_name: ' + req.params.account_name);
+            	console.log('Received response ' + account.code + ' for accountIdByName with account_name: ' + decodeURIComponent(req.params[0]));
                 res.status(account.code).json(account);
             }
         });

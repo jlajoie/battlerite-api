@@ -27,7 +27,7 @@ module.exports = function(app, config) {
     app.post('/api/v1/teams', controllers.teams.getOrCreate);
 
     // ID route
-    app.get('/api/v1/ids/:account_name', controllers.accounts.getAccountIdByName);
+    app.get(/^\/api\/v1\/ids\/(.*)?$/, controllers.accounts.getAccountIdByName);
 
     // Profile route
     app.post('/api/v1/profiles', controllers.accounts.getProfileByIds);
