@@ -27,7 +27,10 @@ module.exports = function () {
         'pestilus',
         null, // Because why not fucking skip 20
         'raigon',
-        'blossom'
+        'blossom',
+	null, // skip 23
+	null, // skip fucking 24
+	'thorn'
     ];
 
     map[2] = 'total_wins'
